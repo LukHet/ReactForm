@@ -1,15 +1,16 @@
 import "../styles/CheckBoxInput.css";
 
 const CheckBoxInput = (props) => {
+  const { value, onchange, label } = props;
   return (
     <>
       <input
         className="checkboxinput"
         type="checkbox"
-        value={props.value}
-        onChange={props.onchange}
+        value={value}
+        onChange={onchange}
       />
-      <label>{props.label}</label>
+      <label>{label}</label>
     </>
   );
 };

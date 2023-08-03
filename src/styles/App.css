@@ -50,3 +50,33 @@
 .userinputs {
     width: 80%;
 }
+
+.errormessage {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.serverresponse {
+    font-weight: bold;
+    text-align: center;
+}
+
+.uppertext {
+    padding: 10px;
+    background-color: rgba(16, 89, 16, 0.8);
+    font-weight: 300;
+    color: white;
+    text-align: center;
+    font-size: 3vh;
+}
+
+.bottomtext {
+    padding: 10px;
+    background-color: rgba(16, 89, 16, 0.8);
+    font-weight: 900;
+    color: white;
+    text-align: center;
+    font-size: 3vh;
+    margin-bottom: 3vh;
+}
