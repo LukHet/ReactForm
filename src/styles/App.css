@@ -1,0 +1,52 @@
+.App {
+    margin: 0 auto;
+    max-width: 576px;
+    color: rgba(95,131,114,255);
+    font-size: 14px;
+}
+
+.form {
+    background-color:rgba(242,241,241,255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.sendbutton {
+    color: white;
+    background-color: rgba(166,179,61,255);
+    font-weight: bold;
+    max-width: 200px;
+    min-width: 200px;
+    width: 20vw;
+    border: none;
+    font-size: 2rem;
+    padding: 10px;
+    margin: 20px 0 20px;
+}
+
+.sendbutton:hover {
+    cursor: pointer;
+}
+
+.infobutton { 
+    color: rgba(32,97,69,255);
+    font-weight: bold;
+    border: none;
+    text-decoration: underline;
+}
+
+.infobutton:hover {
+    cursor: pointer;
+}
+
+.infotext {
+    margin: 20px 0 20px;
+    text-align: left;
+    font-weight: 700;
+}
+
+.userinputs {
+    width: 80%;
+}
