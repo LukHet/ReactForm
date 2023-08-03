@@ -19,8 +19,6 @@ const App = () => {
 
   const URL = "";
 
-  console.log(!smsCheckbox || !phoneCheckbox);
-
   const handleTextChange = (e) => {
     setName(e.target.value);
   };
