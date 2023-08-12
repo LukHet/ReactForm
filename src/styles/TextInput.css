@@ -18,3 +18,9 @@
   :-moz-placeholder {
     text-align: center;
 }
+
+.errormessage {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}

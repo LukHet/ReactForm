@@ -1,7 +1,7 @@
 import "../styles/CheckBoxInput.css";
 
 const CheckBoxInput = (props) => {
-  const { value, onchange, label } = props;
+  const { value, onchange, label, id } = props;
   return (
     <>
       <input
@@ -9,8 +9,9 @@ const CheckBoxInput = (props) => {
         type="checkbox"
         value={value}
         onChange={onchange}
+        id={id}
       />
-      <label>{label}</label>
+      <label htmlFor={id}>{label}</label>
     </>
   );
 };

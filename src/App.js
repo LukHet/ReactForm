@@ -13,9 +13,13 @@ const App = () => {
   const [smsCheckbox, setSmsCheckbox] = useState(false);
   const [phoneCheckboxesVisibility, setPhoneCheckboxesVisibility] =
     useState(false);
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(1);
   const [errorMessage, setErrorMessage] = useState(null);
   const [serverResponse, setServerResponse] = useState(null);
+  const [nameError, setNameError] = useState(null);
+  const [numberError, setNumberError] = useState(null);
+  const [mailError, setMailError] = useState(null);
+  const [checkboxesError, setCheckBoxesError] = useState(null);
 
   const URL = "";
 
@@ -64,56 +68,137 @@ const App = () => {
     return e.match(/^\d{9}$/);
   };
 
-  const clearInputs = () => {
-    setNumber("");
-    setEmail("");
-    setName("");
-    setMailCheckbox(false);
-    setPhoneCheckbox(false);
-    setSmsCheckbox(false);
-    setPhoneCheckboxesVisibility(false);
+  const createForm = (obj) => {
+    const formData = new FormData();
+
+    Object.entries(obj).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    return formData;
   };
 
   const handleServerResponse = (e) => {
+    console.log(e);
     setErrorMessage(null);
-    setServerResponse(e?.content);
-    clearInputs();
+    if (e.data.content) {
+      setErrorMessage(null);
+      setServerResponse(e?.data?.content);
+      return;
+    }
+    if (e.data.error) {
+      setServerResponse(null);
+      for (const [key, value] of Object.entries(e.data.error)) {
+        setErrorMessage((prevState) =>
+          prevState ? prevState + ` ${key} ${value}` : `${key} ${value}`
+        );
+      }
+      return;
+    }
+  };
+
+  const clearErrors = () => {
+    setMailError(null);
+    setNumberError(null);
+    setNameError(null);
   };
 
   const handleErrorMessage = (e) => {
     setServerResponse(null);
     setErrorMessage(e?.message);
-    clearInputs();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleTextInputsValidation = (
+    name,
+    number,
+    email,
+    validateEmail,
+    validateNumber
+  ) => {
+    !name.length
+      ? setNameError("Należy wprowadzić prawidłowe imię i nazwisko")
+      : setNameError(null);
+
+    !validateEmail(email)
+      ? setMailError("Należy wprowadzić prawidłowy adres email")
+      : setMailError(null);
+
+    !validateNumber(number)
+      ? setNumberError("Należy wprowadzić prawidłowy numer telefonu")
+      : setNumberError(null);
+  };
+
+  const handleCheckboxesValidation = (
+    number,
+    validateNumber,
+    smsCheckbox,
+    phoneCheckbox,
+    mailCheckbox,
+    setCheckBoxesError
+  ) => {
     if (
       number.length &&
       validateNumber(number) &&
       !smsCheckbox &&
       !phoneCheckbox
     ) {
+      setCheckBoxesError("Należy zaznaczyć prawidłowe zgody");
       return;
     }
-    if (number.length && !validateNumber(number)) {
+
+    if (!mailCheckbox) {
+      setCheckBoxesError("Należy zaznaczyć prawidłowe zgody");
       return;
     }
-    if (name.length && validateEmail(email) && mailCheckbox) {
+
+    setCheckBoxesError(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    handleTextInputsValidation(
+      name,
+      number,
+      email,
+      validateEmail,
+      validateNumber
+    );
+
+    handleCheckboxesValidation(
+      number,
+      validateNumber,
+      smsCheckbox,
+      phoneCheckbox,
+      mailCheckbox,
+      setCheckBoxesError
+    );
+
+    if (
+      name.length &&
+      validateEmail(email) &&
+      mailCheckbox &&
+      validateNumber(number) &&
+      !checkboxesError
+    ) {
+      clearErrors();
       setCounter((prevCounter) => prevCounter + 1);
+      const data = {
+        name: name,
+        email: email,
+        phone: number,
+        agreement_mail: mailCheckbox,
+        agreement_call: phoneCheckbox,
+        agreement_sms: smsCheckbox,
+        error_test: counter % 10 === 0 ? "" : email,
+      };
       axios
-        .post(URL, {
-          name: name,
-          email: email,
-          phone: number,
-          agreement_mail: mailCheckbox,
-          agreement_call: phoneCheckbox,
-          agreement_sms: smsCheckbox,
-          error_test: counter % 10 === 0 ? "" : email,
-        })
+        .post(URL, createForm(data))
         .then((response) => handleServerResponse(response))
         .catch((error) => handleErrorMessage(error));
+      return;
     }
+    setServerResponse(null);
   };
 
   return (
@@ -130,19 +215,25 @@ const App = () => {
               placeholder="IMIĘ I NAZWISKO"
               value={name}
               onchange={handleTextChange}
+              errormessage={nameError}
             />
             <TextInput
               type="tel"
               placeholder="TELEFON"
               value={number}
               onchange={handleNumberChange}
+              errormessage={numberError}
             />
-            <div className="serverresponse">{serverResponse}</div>
+            <div
+              className="serverresponse"
+              dangerouslySetInnerHTML={{ __html: serverResponse }}
+            />
             <TextInput
               type="email"
               placeholder="EMAIL"
               value={email}
               onchange={handleEmailChange}
+              errormessage={mailError}
             />
             <div className="errormessage">{errorMessage}</div>
             <div className="infotext">
@@ -153,6 +244,7 @@ const App = () => {
             <div className="checkboxes">
               <div>
                 <CheckBoxInput
+                  id="mailCheckbox"
                   value={mailCheckbox}
                   onchange={handleMailCheckboxChange}
                   label="w formie elektronicznej (mail) na wskazany adres mailowy"
@@ -161,12 +253,14 @@ const App = () => {
               {phoneCheckboxesVisibility ? (
                 <>
                   <CheckBoxInput
+                    id="phoneCheckbox"
                     value={phoneCheckbox}
                     onchange={handlePhoneCheckboxChange}
                     label="drogą telefoniczną, na udostępniony numer telefonu"
                   />
                   <div>
                     <CheckBoxInput
+                      id="smsCheckbox"
                       value={smsCheckbox}
                       onchange={handleSmsCheckboxChange}
                       label="w formie SMS, na udostępniony numer telefonu"
@@ -174,6 +268,7 @@ const App = () => {
                   </div>
                 </>
               ) : null}
+              <div className="errormessage">{checkboxesError}</div>
             </div>
           </div>
           <button onClick={handleSubmit} className="sendbutton">

@@ -1,7 +1,7 @@
 import "../styles/TextInput.css";
 
 const TextInput = (props) => {
-  const { type, placeholder, value, onchange } = props;
+  const { type, placeholder, value, onchange, errormessage } = props;
   return (
     <>
       <input
@@ -11,6 +11,7 @@ const TextInput = (props) => {
         value={value}
         onChange={onchange}
       />
+      <div className="errormessage">{errormessage}</div>
     </>
   );
 };
