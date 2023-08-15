@@ -202,12 +202,12 @@ const App = () => {
   };
 
   return (
-    <>
+    <div className="app">
       <div className="uppertext">
         Czy już widzisz tutaj swój nowy dom? Skontaktuj się z nami
       </div>
       <div className="bottomtext">i porozmawiaj o ofercie działki!</div>
-      <div className="App">
+      <div className="appwindow">
         <form className="form">
           <div className="userinputs">
             <TextInput
@@ -279,7 +279,7 @@ const App = () => {
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 
